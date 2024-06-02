@@ -51,6 +51,10 @@ FILD_NAMES = {'dump_get_azs_table.data': ['uch', 'dt_giveout_a', 'storekeeper_na
 
 
 async def fetch_data_file(name: str):
+    """
+    Fetching data from a file.
+    :param name: File name.
+    """
     try:
         logging.info(f'Start({name})!')
         file_name = DATA_DIR/name
@@ -65,7 +69,10 @@ async def fetch_data_file(name: str):
 
 
 async def save_data_csv_files(name: str):
-
+    """
+    Resave data in CSV format.
+    :param name: File name.
+    """
     name_csv = DATA_DIR/(name.split('.')[0]+'.csv')
     logging.info(f'Start({name_csv})!')
 

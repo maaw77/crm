@@ -17,12 +17,16 @@ import json
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / 'data'
 
+if not DATA_DIR.exists():
+    DATA_DIR.mkdir()
+
 if __name__ == '__main__':
     # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
     sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
 # Importing project packages.
 import webapi
+# from fileapi import fetchdata
 
 # Defining file names.
 FILE_NAMES = ['dump_get_azs_table.data', 'dump_get_dailyrep_table.data',
@@ -88,11 +92,12 @@ async def dumpdata_main(session: aiohttp.ClientSession):
 
 async def fetch_data_file(name: str):
     """
-    Fetch data from a dump file.
+    Fetching data from a file.
+    :param name: File name.
     """
     try:
         logging.info(f'Start({name})!')
-        file_name = DATA_DIR / name
+        file_name = DATA_DIR/name
         if not file_name.exists():
             logging.error(f'The file({name}) does not exist!')
             return
@@ -106,6 +111,7 @@ async def fetch_data_file(name: str):
 async def save_data_csv_files(name: str):
     """
     Resave data in CSV format.
+    :param name: File name.
     """
     name_csv = DATA_DIR / (name.split('.')[0] + '.csv')
     logging.info(f'Start({name_csv})!')
@@ -127,7 +133,6 @@ async def save_data_csv_main():
     logging.info('Start!')
     tasks = [asyncio.create_task(save_data_csv_files(fn)) for fn in FILE_NAMES]
     results = await asyncio.gather(*tasks)
-
     logging.info(f'Stop({results})!')
 
 
@@ -140,8 +145,6 @@ async def main(command: str):
     else:
         await save_data_csv_main()
 
-    # await dumpdata_file(URL_GSM_TABLE, session) # , dt_beg="25.03.2024", dt_end="10.05.2024")
-
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
@@ -150,7 +153,4 @@ if __name__ == '__main__':
     parser.add_argument('command', choices=['dump', 'resave'],
                         help='1. "dump" the data to a file from the endpoint(url).\n2. "resave" of data in CSV forma.')
     args = parser.parse_args()
-
-    logging.info(f'The program is running({args.command})!')
     asyncio.run(main(args.command))
-    logging.info(f'The program has been stopped({args.command})!')

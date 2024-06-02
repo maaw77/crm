@@ -103,7 +103,7 @@ async def create_tables(con: asyncpg.Connection):
     statements = [CREATE_SITES_TABLE, CREATE_OPERATORS_TABLE,
                   CREATE_PROVIDERS_TABLE, CREATE_CONTRACTORS_TABLE,
                   CREATE_LICENSE_PLATES_TABLE, CREATE_STATUSES_TABLE,
-                  CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE]
+                  CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE, ]
     for statement in statements:
         status = await con.execute(statement)
         logging.info(f'Status of the last SQL command: {status} {statement.split()[5]};')
