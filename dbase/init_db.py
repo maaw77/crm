@@ -1,15 +1,16 @@
-# import sys
+import argparse
 
 import logging
 
 import asyncio
 import asyncpg
 
-# from pathlib import Path
+import sys
+from pathlib import Path
 # Defining the paths.
-# BASE_DIR = Path(__file__).resolve().parent
-# if __name__ == '__main__':
-#     sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
+BASE_DIR = Path(__file__).resolve().parent
+if __name__ == '__main__':
+    sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
 # Importing project packages.
 from settings_management import Settings
@@ -110,7 +111,7 @@ async def create_tables(con: asyncpg.Connection):
     logging.info('Stopping the creation of database tables!')
 
 
-async def main():
+async def main(command: str):
     con_par = Settings()  # Loading environment variables
     connection: asyncpg.Connection = await asyncpg.connect(host=con_par.HOST_DB,
                                                            port=con_par.PORT_DB,
@@ -118,10 +119,12 @@ async def main():
                                                            database=con_par.POSTGRES_DB,
                                                            password=con_par.POSTGRES_PASSWORD.get_secret_value())
 
-    version = connection.get_server_version()
-    print(version)
-    await create_tables(connection)
-    # await drop_tables(connection)
+    # version = connection.get_server_version()
+    # print(version)
+    if command == 'init':
+        await create_tables(connection)
+    elif command == 'delete':
+        await drop_tables(connection)
 
     await connection.close()
 
@@ -129,4 +132,8 @@ async def main():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s")
-    asyncio.run(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', choices=['init', 'delete'],
+                        help='1. "init" - creates tables in the database.\n2. "delete"tables in the database.')
+    args = parser.parse_args()
+    asyncio.run(main(args.command))

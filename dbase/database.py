@@ -5,7 +5,7 @@ import asyncpg
 from datetime import datetime
 
 # Importing project packages.
-from data_validators import GsmTable
+from .data_validators import GsmTable
 
 
 async def get_id_or_create(conn: asyncpg.Connection, nametable: str, val_record: str) -> int:

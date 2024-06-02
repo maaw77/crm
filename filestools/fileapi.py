@@ -7,15 +7,12 @@ import sys
 import json
 import csv
 
-import asyncio
 import aiofiles
 
 # Defining the paths.
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR/'data'
 
-if __name__ == '__main__':
-    sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
 # Defining file names.
 FILE_NAMES = ['dump_get_azs_table.data',  # Vidach iz TRK
@@ -85,23 +82,3 @@ async def save_data_csv_files(name: str):
                 await writer.writerow(dt)
     logging.info(f'Stop({name_csv})!')
 
-
-async def save_data_csv_main():
-    logging.info('Start!')
-    tasks = [asyncio.create_task(save_data_csv_files(fn)) for fn in FILE_NAMES]
-    results = await asyncio.gather(*tasks)
-
-    logging.info(f'Stop({results})!')
-
-
-async def main():
-    logging.info('Start!')
-    await save_data_csv_main()
-    logging.info('Stop!')
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s")
-
-    asyncio.run(main())

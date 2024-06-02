@@ -12,15 +12,15 @@ import json
 
 import asyncio
 
-# Importing project packages.
-from fileapi import fetchdata
+from pathlib import Path
+import sys
+# Defining the paths.
+BASE_DIR = Path(__file__).resolve().parent
+if __name__ == '__main__':
+    sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
-# from pathlib import Path
-# import sys
-# # Defining the paths.
-# BASE_DIR = Path(__file__).resolve().parent
-# if __name__ == '__main__':
-#     sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
+# Importing project packages.
+from filestools import fileapi
 
 
 # Defining classes to validate input data.
@@ -79,8 +79,8 @@ async def deserial_valid(raw_data: str, model_val: Type[GsmTable]) -> AsyncItera
 
 async def main():
     logging.info('Start!')
-    print(fetchdata.FILE_NAMES[3])
-    async for raw_data in fetchdata.fetch_data_file(fetchdata.FILE_NAMES[3]):
+    print(fileapi.FILE_NAMES[3])
+    async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[3]):
         async for data in deserial_valid(raw_data, GsmTable):
             print(data)
     logging.info('Stop!')
