@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
 # Importing project packages.
 from settings_management import Settings
-from data_validators import GsmTable, deserial_valid
+from dbase.data_validators import GsmTable, deserial_valid
 import web
 from filestools import fileapi
 from database import insert_gsm_table

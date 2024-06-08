@@ -51,15 +51,15 @@ async def login_user(session: aiohttp.ClientSession):
     """
     User registration.
     """
-    async with session.get(URL_BASE) as resp:
-        assert resp.status == HTTPStatus.OK
+    async with session.get(URL_LOG) as resp:
         logging.info(f'Status code(get): {resp.status}')
+        assert resp.status == HTTPStatus.OK
         html_doc = await resp.text()
 
     soup = BeautifulSoup(html_doc, 'html.parser')
     tag_inp_hidden = soup.find_all('input', attrs={'type': 'hidden'})
     csrm_val_1 = tag_inp_hidden[0].get('value')
-    csrm_val_2 = tag_inp_hidden[1].get('value')
+    csrm_val_2 = tag_inp_hidden[0].get('value')  # I corrected it here on 06/04/2024
 
     payload = [('csrfmiddlewaretoken', csrm_val_1),
                ('username', 'researcher'), ('password', ':4&@uveWz'),

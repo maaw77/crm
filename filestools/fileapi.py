@@ -73,7 +73,7 @@ async def save_data_csv_files(name: str):
     name_csv = DATA_DIR/(name.split('.')[0]+'.csv')
     logging.info(f'Start({name_csv})!')
 
-    async with aiofiles.open(name_csv, 'w', newline='') as csvfile:
+    async with aiofiles.open(name_csv, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=FILD_NAMES[name])
         await writer.writeheader()
         async for raw_data in fetch_data_file(name):

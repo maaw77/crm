@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent
 if __name__ == '__main__':
     sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
-# Importing project packages.
+# Importing project's packages.
 from settings_management import Settings
 
 # Defining sql commands for creating tables.
@@ -77,7 +77,8 @@ CREATE_GSM_TABLE = \
                             guid text    
                     );"""
 
-CREATE_INDEX_GSM_TABLE = '''CREATE INDEX gsm_table_dt_receiving ON gsm_table (dt_receiving);'''
+CREATE_INDEX_GSM_TABLE_1 = '''CREATE INDEX IF NOT EXISTS gsm_table_dt_receiving ON gsm_table (dt_receiving);'''
+CREATE_INDEX_GSM_TABLE_2 = '''CREATE INDEX IF NOT EXISTS gsm_table_guid ON gsm_table (guid);'''
 
 
 async def drop_tables(con: asyncpg.Connection):
@@ -104,7 +105,7 @@ async def create_tables(con: asyncpg.Connection):
     statements = [CREATE_SITES_TABLE, CREATE_OPERATORS_TABLE,
                   CREATE_PROVIDERS_TABLE, CREATE_CONTRACTORS_TABLE,
                   CREATE_LICENSE_PLATES_TABLE, CREATE_STATUSES_TABLE,
-                  CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE, ]
+                  CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE_1, CREATE_INDEX_GSM_TABLE_2, ]
     for statement in statements:
         status = await con.execute(statement)
         logging.info(f'Status of the last SQL command: {status} {statement.split()[5]};')

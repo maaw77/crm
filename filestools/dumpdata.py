@@ -19,7 +19,7 @@ if not DATA_DIR.exists():
 if __name__ == '__main__':
     sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.parent
 
-# Importing project packages.
+# Importing project's packages.
 import web
 import fileapi
 
@@ -28,7 +28,6 @@ async def dumpdata_file(url: str, session: aiohttp.ClientSession, *, dt_beg: str
     """
     Dump the data to a file from the endpoint(url).
     """
-    # print(url)
     endpoint_name = URL(url).path[1: len(URL(url).path) - 1]
     name = 'dump_' + endpoint_name + '.data'
     file_name = DATA_DIR / name
