@@ -4,6 +4,7 @@ import asyncio
 import asyncpg
 import aiohttp
 
+from typing import Union, Type
 from collections.abc import AsyncIterable, Callable
 
 import sys
@@ -16,20 +17,24 @@ if __name__ == '__main__':
 
 # Importing project packages.
 from settings_management import Settings
-from dbase.data_validators import GsmTable, deserial_valid
+from dbase.data_validators import (GsmTable, TankTable, SheetTable, AZSTable,
+                                   ExchangeTable, RemainsTable,  deserial_valid)
 import web
 from filestools import fileapi
-from database import insert_gsm_table
+from database import (insert_gsm_table, insert_tank_table, insert_sheet_table,
+                      insert_azs_table, insert_exchange_table, insert_remains_table)
 
 
-async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_table: Callable):
+async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_table: Callable,
+                         validator: Union[Type[GsmTable], Type[TankTable], Type[SheetTable],
+                                          Type[AZSTable], Type[ExchangeTable], Type[RemainsTable]]):
     """
-    Loads the contents of the " dataflow" into the database.
+    Loads the contents of the "dataflow" into the database.
     """
     logging.info('Starting the data upload to the database!')
     async with pool.acquire() as conn:
         async for raw_data in dataflow:
-            async for data in deserial_valid(raw_data, GsmTable):
+            async for data in deserial_valid(raw_data, validator):
                 await insert_table(conn, data)
     logging.info('Stopping data loading into the database!')
 
@@ -44,7 +49,28 @@ async def main():
                                    user=con_par.POSTGRES_USER,
                                    database=con_par.POSTGRES_DB,
                                    password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
-        await loaddata_table(pool, fileapi.fetch_data_file(fileapi.FILE_NAMES[3]), insert_gsm_table)
+
+        data_loaders = [loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[3]),
+                                       insert_gsm_table, GsmTable),
+                        loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[7]),
+                                       insert_tank_table, TankTable),
+                        loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[6]),
+                                       insert_sheet_table, SheetTable),
+                        loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[0]),
+                                       insert_azs_table, AZSTable),
+                        loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[2]),
+                                       insert_exchange_table, ExchangeTable),
+                        loaddata_table(pool,
+                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[5]),
+                                       insert_remains_table, RemainsTable),]
+        tasks = [asyncio.create_task(data_loader) for data_loader in data_loaders]
+        await asyncio.sleep(0)
+        results = await asyncio.gather(*tasks)
 
 
 # async def main():

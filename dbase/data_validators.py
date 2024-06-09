@@ -145,7 +145,7 @@ class AZSTable(BaseModel):
     date_crch: date | str = Field(validation_alias='date_color')  # Data sozdaniya ili posledney pravki
     site: str = Field(validation_alias='uch')  # Uchastok
     storekeeper_name: str = Field(validation_alias='storekeeper_name_a')  # FIO kladovchika
-    counter_azs_bd: float | str = Field(validation_alias='counter_azs_begin_day_a') # Shetchik nachalo dnya
+    counter_azs_bd: float | str = Field(validation_alias='counter_azs_begin_day_a')  # Shetchik nachalo dnya
     counter_azs_ed: float | str = Field(validation_alias='counter_azs_end_day')  # Shetchik konec dnya
     given_litres: float | str = Field(validation_alias='given_litres_a')  # Vidano v litres za sutki
     given_kg: float | str = Field(validation_alias='given_kg_a')  # Vidano v kg za sutki
@@ -283,10 +283,10 @@ async def main():
     #     async for data in deserial_valid(raw_data, GsmTable):
     #         print(data)
 
-    # print(fileapi.FILE_NAMES[7])
-    # async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[7]):
-    #     async for data in deserial_valid(raw_data, TankTable):
-    #         print(data)
+    print(fileapi.FILE_NAMES[7])
+    async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[7]):
+        async for data in deserial_valid(raw_data, TankTable):
+            print(data)
 
     # print(fileapi.FILE_NAMES[6])
     # async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[6]):
@@ -298,16 +298,15 @@ async def main():
     #     async for data in deserial_valid(raw_data, AZSTable):
     #         print(data)
 
-
     # print(fileapi.FILE_NAMES[2])
     # async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[2]):
     #     async for data in deserial_valid(raw_data, ExchangeTable):
     #         print(data)
 
-    print(fileapi.FILE_NAMES[5])
-    async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[5]):
-        async for data in deserial_valid(raw_data, RemainsTable):
-            print(data)
+    # print(fileapi.FILE_NAMES[5])
+    # async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[5]):
+    #     async for data in deserial_valid(raw_data, RemainsTable):
+    #         print(data)
     logging.info('Stop!')
 
 
