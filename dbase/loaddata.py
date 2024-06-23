@@ -21,7 +21,7 @@ from dbase.data_validators import (GsmTable, TankTable, SheetTable, AZSTable,
                                    ExchangeTable, RemainsTable,  deserial_valid)
 import web
 from filestools import fileapi
-from database import (insert_gsm_table, insert_tank_table, insert_sheet_table,
+from dbase.database import (insert_gsm_table, insert_tank_table, insert_sheet_table,
                       insert_azs_table, insert_exchange_table, insert_remains_table)
 
 
@@ -71,7 +71,6 @@ async def main():
                                        insert_remains_table, RemainsTable),]
         tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
         logging.info(tasks)
-
 
 
 # async def main():

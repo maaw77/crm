@@ -202,7 +202,6 @@ class ExchangeTable(BaseModel):
         out_date = datetime.strptime(in_date, '%d.%m.%Y').date()
         return out_date
 
-
     @field_validator('litres', 'density')
     @classmethod
     def check_valid_data(cls, in_d: str | float) -> float:
@@ -268,10 +267,6 @@ class DateRangeValid(BaseModel):
         return self
 
 
-
-
-
-
 async def deserial_valid(raw_data: str, model_val: Union[Type[GsmTable], Type[TankTable],
                                                          Type[SheetTable], Type[AZSTable],
                                                          Type[ExchangeTable], Type[RemainsTable]]
@@ -289,9 +284,6 @@ async def deserial_valid(raw_data: str, model_val: Union[Type[GsmTable], Type[Ta
             logging.error(f'{e}({in_data})')
             continue
         # yield dv.model_dump()
-
-
-
 
 
 async def main():

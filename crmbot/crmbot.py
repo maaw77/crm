@@ -5,8 +5,8 @@ import asyncpg
 import aiohttp
 
 from datetime import datetime, date, timedelta, time
-from collections.abc import AsyncIterable, Callable, Coroutine
-from typing import Union, Type, Any
+from collections.abc import AsyncIterable, Callable
+from typing import Union, Type
 
 import sys
 from pathlib import Path
@@ -47,12 +47,14 @@ from filestools import fileapi
 async def bot_table(session: aiohttp.ClientSession,
                     pool: asyncpg.Pool, *,
                     fetcher: AsyncIterable[str],
-                    insert_table: Callable[[asyncpg.Connection, Union[GsmTable, TankTable, SheetTable,
-                                            AZSTable, ExchangeTable, RemainsTable]], Coroutine[Any, Any, int]],
+                    insert_table: Callable,
                     validator: Union[Type[GsmTable], Type[TankTable], Type[SheetTable],
                                      Type[AZSTable], Type[ExchangeTable], Type[RemainsTable]],
                     sleep_time: float = 0.0):
-
+    """
+    Scans the endpoints of the web application and saves new data (resources) to the database.
+    Automatically starts scanning at 23:00 every day.
+    """
     while True:
         await asyncio.sleep(sleep_time)
         next_day_time = datetime.combine(date.today() + timedelta(days=1), time(23, 0))
