@@ -10,6 +10,17 @@ import json
 from http import HTTPStatus
 from bs4 import BeautifulSoup
 
+import sys
+from pathlib import Path
+
+# Defining the paths.
+BASE_DIR = Path(__file__).resolve().parent
+if __name__ == '__main__':
+    sys.path.append(str(BASE_DIR.parent))  # Defining PROJECT_DIR = BASE_DIR.paren
+
+# Importing project packages.
+from settings_management import Settings
+
 # Defining the main urls.
 URL_BASE = 'http://192.168.6.77'
 URL_LOG = 'http://192.168.6.77/auth/login/'
@@ -51,7 +62,11 @@ async def login_user(session: aiohttp.ClientSession):
     """
     User registration.
     """
+    credent = Settings()
     async with session.get(URL_LOG) as resp:
+        if len(resp.history):  # I corrected it here on 06/04/2024
+            logging.info(f'It was registered earlier!')
+            return None
         logging.info(f'Status code(get): {resp.status}')
         assert resp.status == HTTPStatus.OK
         html_doc = await resp.text()
@@ -62,7 +77,7 @@ async def login_user(session: aiohttp.ClientSession):
     csrm_val_2 = tag_inp_hidden[0].get('value')  # I corrected it here on 06/04/2024
 
     payload = [('csrfmiddlewaretoken', csrm_val_1),
-               ('username', 'researcher'), ('password', ':4&@uveWz'),
+               ('username',  credent.crm_username), ('password', credent.crm_password.get_secret_value()),
                ('csrfmiddlewaretoken', csrm_val_2)]
     async with session.post(URL_LOG, data=payload) as resp:
         logging.info(f'Status code(post): {resp.status}')

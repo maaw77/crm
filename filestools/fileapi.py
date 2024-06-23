@@ -7,6 +7,8 @@ import sys
 import json
 import csv
 
+from collections.abc import AsyncIterator
+
 import aiofiles
 
 # Defining the paths.
@@ -47,7 +49,7 @@ FILD_NAMES = {'dump_get_azs_table.data': ['uch', 'dt_giveout_a', 'storekeeper_na
                                            'table_color', 'date_color', 'status', 'status_id', 'guid']}
 
 
-async def fetch_data_file(name: str):
+async def fetch_data_file(name: str) -> AsyncIterator[str]:
     """
     Fetching data from a file.
     :param name: File name.
@@ -81,4 +83,3 @@ async def save_data_csv_files(name: str):
             for dt in json_data:
                 await writer.writerow(dt)
     logging.info(f'Stop({name_csv})!')
-

@@ -8,8 +8,10 @@ from typing import Union
 from pydantic import (BaseModel,
                       Field,
                       field_validator,
+                      model_validator,
                       ValidationError)
 from typing import Type
+from typing_extensions import Self
 
 import json
 
@@ -234,8 +236,6 @@ class RemainsTable(BaseModel):
     guid: str
     correction: int = Field(exclude=True)
 
-
-
     @field_validator('dt_inspection')
     @classmethod
     def check_valid_date(cls, in_date: str) -> date:
@@ -257,6 +257,21 @@ class RemainsTable(BaseModel):
         return str(tanker)
 
 
+class DateRangeValid(BaseModel):
+    dt_begin: date
+    dt_end: date
+
+    @model_validator(mode='after')
+    def check_date(self) -> Self:
+        if self.dt_begin > self.dt_end:
+            raise ValueError('dt_end должно быть больше или равно dt_begin!')
+        return self
+
+
+
+
+
+
 async def deserial_valid(raw_data: str, model_val: Union[Type[GsmTable], Type[TankTable],
                                                          Type[SheetTable], Type[AZSTable],
                                                          Type[ExchangeTable], Type[RemainsTable]]
@@ -269,11 +284,14 @@ async def deserial_valid(raw_data: str, model_val: Union[Type[GsmTable], Type[Ta
     for in_data in data:
         try:
             dv = model_val.model_validate(in_data)
+            yield dv
         except ValidationError as e:
             logging.error(f'{e}({in_data})')
             continue
         # yield dv.model_dump()
-        yield dv
+
+
+
 
 
 async def main():

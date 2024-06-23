@@ -19,5 +19,5 @@ class Settings(BaseSettings):
 
 
 if __name__ == '__main__':
-    print(Settings())
+    print(Settings().crm_password.get_secret_value())
 

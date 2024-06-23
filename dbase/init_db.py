@@ -23,12 +23,12 @@ CREATE_SITES_TABLE = \
                             name text
                     );'''
 
-CREATE_DEST_SITES_TABLE = \
-                    '''
-                    CREATE TABLE IF NOT EXISTS dest_sites (
-                            id SERIAL PRIMARY KEY,
-                            name text
-                    );'''
+# CREATE_DEST_SITES_TABLE = \
+#                     '''
+#                     CREATE TABLE IF NOT EXISTS dest_sites (
+#                             id SERIAL PRIMARY KEY,
+#                             name text
+#                     );'''
 
 CREATE_OPERATORS_TABLE = \
                     '''
@@ -129,6 +129,22 @@ CREATE_INDEX_GSM_TABLE_1 = '''CREATE INDEX IF NOT EXISTS gsm_table_dt_receiving 
 CREATE_INDEX_GSM_TABLE_2 = '''CREATE INDEX IF NOT EXISTS gsm_table_guid ON gsm_table (guid);'''
 
 
+# CREATE_TANK_TABLE = \
+#                     '''
+#                     CREATE TABLE IF NOT EXISTS tank_table (
+#                             id SERIAL PRIMARY KEY,
+#                             dt_giveout date,
+#                             dt_crch date,
+#                             given_kg real,
+#                             been_changed boolean,
+#                             db_data_creation timestamp,
+#                             site_id integer REFERENCES sites ON DELETE CASCADE,
+#                             onboard_num_id integer REFERENCES  onboard_nums ON DELETE CASCADE,
+#                             dest_site_id integer REFERENCES dest_sites ON DELETE CASCADE,
+#                             status_id integer REFERENCES  statuses ON DELETE CASCADE,
+#                             guid text
+#                       );'''
+
 CREATE_TANK_TABLE = \
                     '''
                     CREATE TABLE IF NOT EXISTS tank_table (
@@ -140,7 +156,7 @@ CREATE_TANK_TABLE = \
                             db_data_creation timestamp,
                             site_id integer REFERENCES sites ON DELETE CASCADE,
                             onboard_num_id integer REFERENCES  onboard_nums ON DELETE CASCADE,
-                            dest_site_id integer REFERENCES dest_sites ON DELETE CASCADE, 
+                            dest_site_id integer REFERENCES sites ON DELETE CASCADE, 
                             status_id integer REFERENCES  statuses ON DELETE CASCADE,           
                             guid text                                                         
                       );'''
@@ -237,17 +253,27 @@ async def drop_tables(con: asyncpg.Connection):
     Remove tables.
     """
     logging.info('Starting to delete database tables!')
+    # statements = ['DROP TABLE IF EXISTS sites CASCADE;', 'DROP TABLE IF EXISTS operators CASCADE;',
+    #               'DROP TABLE IF EXISTS providers CASCADE;', 'DROP TABLE IF EXISTS contractors CASCADE;',
+    #               'DROP TABLE IF EXISTS license_plates CASCADE;', 'DROP TABLE IF EXISTS statuses CASCADE;',
+    #               'DROP TABLE IF EXISTS gsm_table CASCADE;', 'DROP TABLE IF EXISTS dest_sites CASCADE;',
+    #               'DROP TABLE IF EXISTS onboard_nums CASCADE;', 'DROP TABLE IF EXISTS tank_table  CASCADE;',
+    #               'DROP TABLE IF EXISTS atzs CASCADE;', 'DROP TABLE IF EXISTS sheet_table CASCADE;',
+    #               'DROP TABLE IF EXISTS storekeepers CASCADE;', 'DROP TABLE IF EXISTS azs_table CASCADE;',
+    #               'DROP TABLE IF EXISTS tankers CASCADE;', 'DROP TABLE IF EXISTS exchange_table CASCADE;',
+    #               'DROP TABLE IF EXISTS inspectors CASCADE;', 'DROP TABLE IF EXISTS fuel_marks CASCADE;',
+    #               'DROP TABLE IF EXISTS remains_table CASCADE;',]
+
     statements = ['DROP TABLE IF EXISTS sites CASCADE;', 'DROP TABLE IF EXISTS operators CASCADE;',
                   'DROP TABLE IF EXISTS providers CASCADE;', 'DROP TABLE IF EXISTS contractors CASCADE;',
                   'DROP TABLE IF EXISTS license_plates CASCADE;', 'DROP TABLE IF EXISTS statuses CASCADE;',
-                  'DROP TABLE IF EXISTS gsm_table CASCADE;', 'DROP TABLE IF EXISTS dest_sites CASCADE;',
+                  'DROP TABLE IF EXISTS gsm_table CASCADE;',
                   'DROP TABLE IF EXISTS onboard_nums CASCADE;', 'DROP TABLE IF EXISTS tank_table  CASCADE;',
                   'DROP TABLE IF EXISTS atzs CASCADE;', 'DROP TABLE IF EXISTS sheet_table CASCADE;',
                   'DROP TABLE IF EXISTS storekeepers CASCADE;', 'DROP TABLE IF EXISTS azs_table CASCADE;',
                   'DROP TABLE IF EXISTS tankers CASCADE;', 'DROP TABLE IF EXISTS exchange_table CASCADE;',
                   'DROP TABLE IF EXISTS inspectors CASCADE;', 'DROP TABLE IF EXISTS fuel_marks CASCADE;',
                   'DROP TABLE IF EXISTS remains_table CASCADE;',]
-
     for statement in statements:
         status = await con.execute(statement)
         logging.info(f'Status of the last SQL command: {status} {statement.split()[4]};')
@@ -259,11 +285,24 @@ async def create_tables(con: asyncpg.Connection):
     Create tables.
     """
     logging.info('Starting creating database tables!')
+    # statements = [CREATE_SITES_TABLE, CREATE_OPERATORS_TABLE,
+    #               CREATE_PROVIDERS_TABLE, CREATE_CONTRACTORS_TABLE,
+    #               CREATE_LICENSE_PLATES_TABLE, CREATE_STATUSES_TABLE,
+    #               CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE_1, CREATE_INDEX_GSM_TABLE_2,
+    #               CREATE_DEST_SITES_TABLE, CREATE_ONBOARD_NUMS_TABLE, CREATE_TANK_TABLE,
+    #               CREATE_INDEX_TANK_TABLE_1, CREATE_INDEX_TANK_TABLE_2, CREATE_ATZS_TABLE,
+    #               CREATE_SHEET_TABLE, CREATE_INDEX_SHEET_TABLE_1, CREATE_INDEX_SHEET_TABLE_2,
+    #               CREATE_STOREKEEPERS_TABLE, CREATE_AZS_TABLE, CREATE_INDEX_AZS_TABLE_1,
+    #               CREATE_INDEX_AZS_TABLE_2, CREATE_TANKERS_TABLE, CREATE_EXCHANGE_TABLE,
+    #               CREATE_INDEX_EXCHANGE_TABLE_1, CREATE_INDEX_EXCHANGE_TABLE_2,
+    #               CREATE_INSPECTORS_TABLE, CREATE_FUEL_MARKS_TABLE, CREATE_REMAINS_TABLE,
+    #               CREATE_INDEX_REMAINS_TABLE_1, CREATE_INDEX_REMAINS_TABLE_2]
+
     statements = [CREATE_SITES_TABLE, CREATE_OPERATORS_TABLE,
                   CREATE_PROVIDERS_TABLE, CREATE_CONTRACTORS_TABLE,
                   CREATE_LICENSE_PLATES_TABLE, CREATE_STATUSES_TABLE,
                   CREATE_GSM_TABLE, CREATE_INDEX_GSM_TABLE_1, CREATE_INDEX_GSM_TABLE_2,
-                  CREATE_DEST_SITES_TABLE, CREATE_ONBOARD_NUMS_TABLE, CREATE_TANK_TABLE,
+                  CREATE_ONBOARD_NUMS_TABLE, CREATE_TANK_TABLE,
                   CREATE_INDEX_TANK_TABLE_1, CREATE_INDEX_TANK_TABLE_2, CREATE_ATZS_TABLE,
                   CREATE_SHEET_TABLE, CREATE_INDEX_SHEET_TABLE_1, CREATE_INDEX_SHEET_TABLE_2,
                   CREATE_STOREKEEPERS_TABLE, CREATE_AZS_TABLE, CREATE_INDEX_AZS_TABLE_1,
@@ -288,10 +327,17 @@ async def main(command: str):
 
     # version = connection.get_server_version()
     # print(version)
-    if command == 'init':
-        await create_tables(connection)
-    elif command == 'delete':
-        await drop_tables(connection)
+    match command:
+        case 'init':
+            await create_tables(connection)
+        case 'delete':
+            await drop_tables(connection)
+        case _:
+            print('Unknown command!')
+    # if command == 'init':
+    #     await create_tables(connection)
+
+    #     await drop_tables(connection)
 
     await connection.close()
 
@@ -301,6 +347,6 @@ if __name__ == '__main__':
                         format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s")
     parser = argparse.ArgumentParser()
     parser.add_argument('command', choices=['init', 'delete'],
-                        help='1. "init" - creates tables in the database.\n2. "delete"tables in the database.')
+                        help='1. "init" - creates tables in the database.\n2. "delete" tables in the database.')
     args = parser.parse_args()
     asyncio.run(main(args.command))

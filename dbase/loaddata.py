@@ -27,7 +27,7 @@ from database import (insert_gsm_table, insert_tank_table, insert_sheet_table,
 
 async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_table: Callable,
                          validator: Union[Type[GsmTable], Type[TankTable], Type[SheetTable],
-                                          Type[AZSTable], Type[ExchangeTable], Type[RemainsTable]]):
+                                          Type[AZSTable], Type[ExchangeTable], Type[RemainsTable]]) -> str:
     """
     Loads the contents of the "dataflow" into the database.
     """
@@ -37,11 +37,12 @@ async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_tab
             async for data in deserial_valid(raw_data, validator):
                 await insert_table(conn, data)
     logging.info('Stopping data loading into the database!')
+    return 'OK!'
 
 
 async def main():
     """
-    From the file.
+    From the files.
     """
     con_par = Settings()  # Loading environment variables
     async with asyncpg.create_pool(host=con_par.HOST_DB,
@@ -68,14 +69,14 @@ async def main():
                         loaddata_table(pool,
                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[5]),
                                        insert_remains_table, RemainsTable),]
-        tasks = [asyncio.create_task(data_loader) for data_loader in data_loaders]
-        await asyncio.sleep(0)
-        results = await asyncio.gather(*tasks)
+        tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
+        logging.info(tasks)
+
 
 
 # async def main():
 #     """
-#     From the endpoint.
+#     From the endpoints.
 #     """
 #     con_par = Settings()  # Loading environment variables
 #     async with asyncpg.create_pool(host=con_par.HOST_DB,
@@ -85,10 +86,22 @@ async def main():
 #                                    password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
 #         jar = aiohttp.CookieJar(unsafe=True)
 #         async with aiohttp.ClientSession(headers=web.HEADERS, cookie_jar=jar) as session:
+#             data_loaders = (loaddata_table(pool, web.fetch_table(web.webapi.URL_GSM_TABLE, session),
+#                                            insert_gsm_table, GsmTable),
+#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_TANK_TABLE, session),
+#                                            insert_tank_table, TankTable),
+#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_SHEET_TABLE, session),
+#                                            insert_sheet_table, SheetTable),
+#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_AZS_TABLE, session),
+#                                            insert_azs_table, AZSTable),
+#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_EXCHANGE_TABLE, session),
+#                                            insert_exchange_table, ExchangeTable),
+#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_REMAINS_TABLE, session),
+#                                            insert_remains_table, RemainsTable),)
 #             await web.login_user(session)
-#             await loaddata_table(pool, web.fetch_table(web.webapi.URL_GSM_TABLE, session), insert_gsm_table)
-#
-#
+#             tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
+#             logging.info(tasks)
+
 
 
 if __name__ == '__main__':
