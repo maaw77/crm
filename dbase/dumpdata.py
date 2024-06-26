@@ -122,13 +122,13 @@ async def select_from_remains_table(con: asyncpg.Connection, dt_begin: date, dt_
     """
     stmt = await con.prepare(database.SELECT_REMAINS_TABLE)
     async with con.transaction():
-        print(f"{'Дата':11} {'Участок':32} {'ФИО проверяющего':20} {'Номер емкости':28} {'Остатки (кг)':15} "
+        print(f"{'Дата':11} {'Участок':32} {'ФИО проверяющего':25} {'Номер емкости':30} {'Остатки (кг)':15} "
               f"{'Марка топлива':15} {'Статус':9}")
         async for record in stmt.cursor(dt_begin, dt_end):
 
             # print(list(record.keys()))
-            print(f"{str(record['dt_inspection']):11} {record['site']:32} {record['inspector']:20} "
-                  f"{record['tanker_num']:28} {record['remains_kg']:<15.2f} {record['fuel_mark']:15} "
+            print(f"{str(record['dt_inspection']):11} {record['site']:32} {record['inspector']:25} "
+                  f"{record['tanker_num']:30} {record['remains_kg']:<15.2f} {record['fuel_mark']:15} "
                   f"{record['status']:9}")
 
 

@@ -36,7 +36,7 @@ SELECT_GSM_TABLE = \
                            JOIN statuses ON gsm_table.status_id = statuses.id
                            WHERE gsm_table.dt_receiving >= $1
                                  and gsm_table.dt_receiving <= $2
-                           ORDER BY gsm_table.dt_receiving;
+                           ORDER BY gsm_table.dt_receiving DESC;
                     '''
 
 
@@ -57,7 +57,7 @@ SELECT_TANK_TABLE = \
                            JOIN statuses ON tank_table.status_id = statuses.id
                            WHERE tank_table.dt_giveout >= $1
                                  and tank_table.dt_giveout <= $2
-                           ORDER BY tank_table.dt_giveout;
+                           ORDER BY tank_table.dt_giveout DESC;
                     '''
 
 SELECT_SHEET_TABLE = \
@@ -78,7 +78,7 @@ SELECT_SHEET_TABLE = \
                            JOIN statuses ON sheet_table.status_id = statuses.id
                            WHERE sheet_table.dt_giveout >= $1
                                  and sheet_table.dt_giveout <= $2
-                           ORDER BY sheet_table.dt_giveout;
+                           ORDER BY sheet_table.dt_giveout DESC;
                     '''
 
 SELECT_AZS_TABLE = \
@@ -99,7 +99,7 @@ SELECT_AZS_TABLE = \
                            JOIN statuses ON azs_table.status_id = statuses.id
                            WHERE azs_table.dt_giveout >= $1
                                  and azs_table.dt_giveout <= $2
-                           ORDER BY azs_table.dt_giveout;
+                           ORDER BY azs_table.dt_giveout DESC;
                     '''
 
 SELECT_EXCHANGE_TABLE = \
@@ -121,7 +121,7 @@ SELECT_EXCHANGE_TABLE = \
                            JOIN statuses ON exchange_table.status_id = statuses.id
                            WHERE exchange_table.dt_change >= $1
                                  and exchange_table.dt_change <= $2
-                           ORDER BY exchange_table.dt_change;
+                           ORDER BY exchange_table.dt_change DESC;
                     '''
 
 
@@ -142,7 +142,7 @@ SELECT_REMAINS_TABLE = \
                            JOIN statuses ON remains_table.status_id = statuses.id
                            WHERE remains_table.dt_inspection >= $1
                                  and remains_table.dt_inspection <= $2
-                           ORDER BY remains_table.dt_inspection;
+                           ORDER BY remains_table.dt_inspection DESC;
                     '''
 
 
@@ -332,7 +332,7 @@ async def insert_azs_table(conn: asyncpg.Connection, in_data: AZSTable) -> int:
                                                                             status_id,
                                                                             in_data.guid)
 
-            logging.info(f"The guid (sheet table) = {in_data.guid} with ID = {record['id']}  was inserted.")
+            logging.info(f"The guid (azs table) = {in_data.guid} with ID = {record['id']}  was inserted.")
     return record['id']
 
 
@@ -378,7 +378,7 @@ async def insert_exchange_table(conn: asyncpg.Connection, in_data: ExchangeTable
                                                                             status_id,
                                                                             in_data.guid)
 
-            logging.info(f"The guid (sheet table) = {in_data.guid} with ID = {record['id']}  was inserted.")
+            logging.info(f"The guid (exchange table) = {in_data.guid} with ID = {record['id']}  was inserted.")
     return record['id']
 
 
@@ -418,5 +418,5 @@ async def insert_remains_table(conn: asyncpg.Connection, in_data: RemainsTable) 
                                                                             status_id,
                                                                             in_data.guid)
 
-            logging.info(f"The guid (sheet table) = {in_data.guid} with ID = {record['id']}  was inserted.")
+            logging.info(f"The guid (remains table) = {in_data.guid} with ID = {record['id']}  was inserted.")
     return record['id']
