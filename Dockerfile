@@ -17,4 +17,4 @@ COPY web /crm/web
 WORKDIR /crm
 
 RUN chmod 755 entrypoint.sh
-ENTRYPOINT ["/crm/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/crm/entrypoint.sh"]
