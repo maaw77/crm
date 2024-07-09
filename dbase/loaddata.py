@@ -40,42 +40,9 @@ async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_tab
     return 'OK!'
 
 
-async def main():
-    """
-    From the files.
-    """
-    con_par = Settings()  # Loading environment variables
-    async with asyncpg.create_pool(host=con_par.HOST_DB,
-                                   port=con_par.PORT_DB,
-                                   user=con_par.POSTGRES_USER,
-                                   database=con_par.POSTGRES_DB,
-                                   password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
-
-        data_loaders = [loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[3]),
-                                       insert_gsm_table, GsmTable),
-                        loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[7]),
-                                       insert_tank_table, TankTable),
-                        loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[6]),
-                                       insert_sheet_table, SheetTable),
-                        loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[0]),
-                                       insert_azs_table, AZSTable),
-                        loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[2]),
-                                       insert_exchange_table, ExchangeTable),
-                        loaddata_table(pool,
-                                       fileapi.fetch_data_file(fileapi.FILE_NAMES[5]),
-                                       insert_remains_table, RemainsTable),]
-        tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
-        logging.info(tasks)
-
-
 # async def main():
 #     """
-#     From the endpoints.
+#     From the files.
 #     """
 #     con_par = Settings()  # Loading environment variables
 #     async with asyncpg.create_pool(host=con_par.HOST_DB,
@@ -83,23 +50,56 @@ async def main():
 #                                    user=con_par.POSTGRES_USER,
 #                                    database=con_par.POSTGRES_DB,
 #                                    password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
-#         jar = aiohttp.CookieJar(unsafe=True)
-#         async with aiohttp.ClientSession(headers=web.HEADERS, cookie_jar=jar) as session:
-#             data_loaders = (loaddata_table(pool, web.fetch_table(web.webapi.URL_GSM_TABLE, session),
-#                                            insert_gsm_table, GsmTable),
-#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_TANK_TABLE, session),
-#                                            insert_tank_table, TankTable),
-#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_SHEET_TABLE, session),
-#                                            insert_sheet_table, SheetTable),
-#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_AZS_TABLE, session),
-#                                            insert_azs_table, AZSTable),
-#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_EXCHANGE_TABLE, session),
-#                                            insert_exchange_table, ExchangeTable),
-#                             loaddata_table(pool, web.fetch_table(web.webapi.URL_REMAINS_TABLE, session),
-#                                            insert_remains_table, RemainsTable),)
-#             await web.login_user(session)
-#             tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
-#             logging.info(tasks)
+#
+#         data_loaders = [loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[3]),
+#                                        insert_gsm_table, GsmTable),
+#                         loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[7]),
+#                                        insert_tank_table, TankTable),
+#                         loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[6]),
+#                                        insert_sheet_table, SheetTable),
+#                         loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[0]),
+#                                        insert_azs_table, AZSTable),
+#                         loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[2]),
+#                                        insert_exchange_table, ExchangeTable),
+#                         loaddata_table(pool,
+#                                        fileapi.fetch_data_file(fileapi.FILE_NAMES[5]),
+#                                        insert_remains_table, RemainsTable),]
+#         tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
+#         logging.info(tasks)
+
+
+async def main():
+    """
+    From the endpoints.
+    """
+    con_par = Settings()  # Loading environment variables
+    async with asyncpg.create_pool(host=con_par.HOST_DB,
+                                   port=con_par.PORT_DB,
+                                   user=con_par.POSTGRES_USER,
+                                   database=con_par.POSTGRES_DB,
+                                   password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
+        jar = aiohttp.CookieJar(unsafe=True)
+        async with aiohttp.ClientSession(headers=web.HEADERS, cookie_jar=jar) as session:
+            data_loaders = (loaddata_table(pool, web.fetch_table(web.webapi.URL_GSM_TABLE, session),
+                                           insert_gsm_table, GsmTable),
+                            loaddata_table(pool, web.fetch_table(web.webapi.URL_TANK_TABLE, session),
+                                           insert_tank_table, TankTable),
+                            loaddata_table(pool, web.fetch_table(web.webapi.URL_SHEET_TABLE, session),
+                                           insert_sheet_table, SheetTable),
+                            loaddata_table(pool, web.fetch_table(web.webapi.URL_AZS_TABLE, session),
+                                           insert_azs_table, AZSTable),
+                            loaddata_table(pool, web.fetch_table(web.webapi.URL_EXCHANGE_TABLE, session),
+                                           insert_exchange_table, ExchangeTable),
+                            loaddata_table(pool, web.fetch_table(web.webapi.URL_REMAINS_TABLE, session),
+                                           insert_remains_table, RemainsTable),)
+            await web.login_user(session)
+            tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
+            logging.info(tasks)
 
 
 

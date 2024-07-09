@@ -128,7 +128,4 @@ async def main():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s")
-
-    logging.info('The program is running!')
     asyncio.run(main())
-    logging.info('The program has been stopped!')

@@ -11,7 +11,7 @@ docker-compose up
 ```
 ## Применение
 ### Инициализации базы данных 
-(```python -m dbase.init_db -h```)
+(Для более подробной информации введите команду:```python -m dbase.init_db -h```)
 ```
 python -m dbase.init_db init
 ```
@@ -31,7 +31,6 @@ python crmbot/crmbot.py
 Автоматически запускает сканирование в 23:00 каждый день.
 ###  Вывод данных из базы данных в стандартный поток вывода
 Пример: 
- ```python -m dbase.dumpdata gsm 2024-05-01 2024-06-01h```
+ ```python -m dbase.dumpdata gsm 2024-05-01 2024-06-01```
 
 Для более подробной информации введите команду: ```python -m dbase.dumpdata -h```
-

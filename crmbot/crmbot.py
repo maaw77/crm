@@ -65,8 +65,8 @@ async def main():
                                    database=con_par.POSTGRES_DB,
                                    password=con_par.POSTGRES_PASSWORD.get_secret_value()) as pool:
         jar = aiohttp.CookieJar(unsafe=True)
-        session_timeout = aiohttp.ClientTimeout(total=10, connect=5)
-        async with aiohttp.ClientSession(headers=web.HEADERS, cookie_jar=jar, timeout=session_timeout) as session:
+        # session_timeout = aiohttp.ClientTimeout(total=10, connect=5)
+        async with aiohttp.ClientSession(headers=web.HEADERS, cookie_jar=jar) as session:
             # From the files.
             # vldrs_ftchrs = ((fileapi.fetch_data_file, {'name': fileapi.FILE_NAMES[3]},
             #                  database.insert_gsm_table, GsmTable,),
@@ -80,6 +80,7 @@ async def main():
             #                  database.insert_exchange_table, ExchangeTable,),
             #                 (fileapi.fetch_data_file, {'name': fileapi.FILE_NAMES[5]},
             #                  database.insert_remains_table, RemainsTable,))
+
             # From the endpoints
             vldrs_ftchrs = ((web.fetch_table, {'url': web.webapi.URL_GSM_TABLE, 'session': session},
                              database.insert_gsm_table, GsmTable,),
