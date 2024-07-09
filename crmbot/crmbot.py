@@ -42,7 +42,7 @@ async def bot_table(session: aiohttp.ClientSession,
         next_day_time = datetime.combine(date.today() + timedelta(days=1), time(23, 0))
         logging.info(f'Start({validator}).')
         try:
-            # await web.login_user(session)
+            await web.login_user(session)
             async with pool.acquire() as conn:
                 async for raw_data in fetcher(**argv_fetcher):
                     async for data in deserial_valid(raw_data, validator):
