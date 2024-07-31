@@ -13,7 +13,7 @@ COPY crmbot/ /crm/crmbot
 COPY dbase/ /crm/dbase
 COPY filestools /crm/filestools
 COPY web /crm/web
-
+COPY tests /crm/tests
 WORKDIR /crm
 
 RUN chmod 755 entrypoint.sh
