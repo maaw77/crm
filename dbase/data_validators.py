@@ -297,6 +297,7 @@ async def main():
     async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[7]):
         async for data in deserial_valid(raw_data, TankTable):
             print(data)
+            pass
 
     # print(fileapi.FILE_NAMES[6])
     # async for raw_data in fileapi.fetch_data_file(fileapi.FILE_NAMES[6]):

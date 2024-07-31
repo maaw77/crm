@@ -298,20 +298,20 @@ async def insert_azs_table(conn: asyncpg.Connection, in_data: AZSTable) -> int:
     """
     statement_1 = 'SELECT id  FROM azs_table WHERE guid=$1;'
     statement_2 = '''INSERT INTO azs_table (id, 
-                                              dt_giveout,
-                                              dt_crch,
-                                              counter_azs_bd,
-                                              counter_azs_ed,
-                                              given_litres,
-                                              given_kg,
-                                              been_changed,
-                                              db_data_creation,
-                                              site_id,
-                                              storekeeper_id,
-                                              status_id,
-                                              guid) 
-                                              VALUES (DEFAULT, $1, $2, $3, $4,  $5, $6, $7, $8,  $9, $10, $11, $12)
-                                              RETURNING id;'''
+                                            dt_giveout,
+                                            dt_crch,
+                                            counter_azs_bd,
+                                            counter_azs_ed,
+                                            given_litres,
+                                            given_kg,
+                                            been_changed,
+                                            db_data_creation,
+                                            site_id,
+                                            storekeeper_id,
+                                            status_id,
+                                            guid) 
+                                            VALUES (DEFAULT, $1, $2, $3, $4,  $5, $6, $7, $8,  $9, $10, $11, $12)
+                                             RETURNING id;'''
 
     async with conn.transaction():
         record: asyncpg.Record = await conn.fetchrow(statement_1, in_data.guid)

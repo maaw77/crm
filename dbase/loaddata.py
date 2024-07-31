@@ -4,7 +4,7 @@ import asyncio
 import asyncpg
 import aiohttp
 
-from typing import Union, Type
+from typing import Union, Type, TypeVar
 from collections.abc import AsyncIterable, Callable
 
 import sys
@@ -22,7 +22,7 @@ from dbase.data_validators import (GsmTable, TankTable, SheetTable, AZSTable,
 import web
 from filestools import fileapi
 from dbase.database import (insert_gsm_table, insert_tank_table, insert_sheet_table,
-                      insert_azs_table, insert_exchange_table, insert_remains_table)
+                            insert_azs_table, insert_exchange_table, insert_remains_table)
 
 
 async def loaddata_table(pool: asyncpg.Pool, dataflow: AsyncIterable, insert_table: Callable,
@@ -100,7 +100,6 @@ async def main():
             await web.login_user(session)
             tasks = [await asyncio.create_task(data_loader) for data_loader in data_loaders]
             logging.info(tasks)
-
 
 
 if __name__ == '__main__':
