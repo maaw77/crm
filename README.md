@@ -53,5 +53,5 @@ docker exec crmbot python -m dbase.dumpdata gsm 2024-05-01 2024-06-01
  ```
 ###  Запуск тестов
  ```commandline
-docker exec pytest -v tests/
+docker exec crmbot pytest -v tests/
  ```
